@@ -3,57 +3,9 @@ $(document).ready(function() {
 	var page = queryStr['page'];
 
 	if (page == "main" || page == undefined) {
-		$.post(
-			"index.php?page=json",
-			{action: "get_all_students"},
-			function(data){
-				var max;
-				if ((data.list.length - 10) < 0) {
-					max = data.list.length;
-				} else {
-					max = 10;
-				}
-				main_url = "https://lenybot.ru/project/index.php?page=main&page_numb=1";
-				history.pushState('', '', main_url);
-				$('#page_list').append(form_page_list(data.list.length, 1, 'get_student_by_page'));
-				$('#students_table').empty();
-				for (var i = 0; i < max; i++) {
-					$('#students_table').append(
-						'<tr><td>'+data.list[i].stud_second_name + " "+data.list[i].stud_name +" "+data.list[i].stud_middle_name +'</td>'+
-						'<td>'+data.list[i].group_numb +'</td>'+
- 						'<td><a name="" href="https://lenybot.ru/project/index.php?page=student_edit&stud_id=' + data.list[i].stud_id +'&stud_name='+data.list[i].stud_name+'&stud_second_name='+ data.list[i].stud_second_name +'&stud_middle_name='+data.list[i].stud_middle_name+'&group_numb='+data.list[i].group_numb +'&status=edit">Редактировать</a></td>' +
- 						'<td><a name="" href="#" onclick="student_del(' + data.list[i].stud_id + ');">Удалтить</a></td></tr>'
-					);
-				}
-			},
-			"json"
-		);
+		get_student_by_page(1);
 	} else if (page == "group_list") {
-		$.post(
-			"index.php?page=json",
-			{action: "get_all_groups"},
-			function(data){
-				var max;
-				if ((data.list.length - 10) < 0) {
-					max = data.list.length;
-				} else {
-					max = 10;
-				}
-				main_url = "https://lenybot.ru/project/index.php?page=group_list&page_numb=1";
-				history.pushState('', '', main_url);
-				$('#page_list').append(form_page_list(data.list.length, 1, 'get_group_by_page'));
-				$('#groups_table').empty();
-				
-				for (var i = 0; i < max; i++) {
-					$('#groups_table').append(
-						'<tr><td>'+data.list[i].group_numb +'</td>'+
- 						'<td><a name="" href="https://lenybot.ru/project/index.php?page=group_edit&group_numb=' + data.list[i].group_numb +'&status=edit">Редактировать</a></td>' +
- 						'<td><a name="" href="#" onclick="group_del(\'' + data.list[i].group_numb + '\');">Удалтить</a></td></tr>'
-						);
-				}
-			},
-			"json"
-		);
+		get_group_by_page(1);
 	} else if (page == "group_edit") {
 		$('#inputGroupNumb').val(queryStr['group_numb']);
 	} else if (page == "student_edit") {
@@ -321,7 +273,7 @@ function form_page_list (count, cur_page, func) {
 	return result.substring(0, result.length - 1);
 }
 
-var parseQueryString = function (strQuery) {
+function parseQueryString (strQuery) {
     var strSearch   = strQuery.substr(1),
         strPattern  = /([^=]+)=([^&]+)&?/ig,
         arrMatch    = strPattern.exec(strSearch),
